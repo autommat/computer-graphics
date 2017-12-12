@@ -4,42 +4,67 @@ ArrayList<Celestial> planets = new ArrayList<Celestial>();
 void setup(){
   fullScreen();
   
+  float year = 1;
+  boolean slowDownMoons = true;
+  
   color mercuryColor= color(209,200,150);
-  Celestial mercury = new Celestial(20, 150, -1/0.24, mercuryColor);
+  Celestial mercury = new Celestial(20, 150, -year/0.24, mercuryColor);
   planets.add(mercury);
   
   color venusColor = color(150,114,43);
-  Celestial venus = new Celestial(60, 200, -1/0.62, venusColor);
+  Celestial venus = new Celestial(60, 200, -year/0.62, venusColor);
   planets.add(venus);
 
   color earthColor = color(171, 224, 232);
-  Celestial earth = new Celestial(100, 400, -1, earthColor);
+  Celestial earth = new Celestial(100,350, -year, earthColor);
   planets.add(earth);
   
+  
+  Celestial moon = new Celestial(20, 100, -year/0.0748, color(155,152,149));
+  earth.moons.add(moon);
+  
   color marsColor = color(193, 138, 60);
-  Celestial mars = new Celestial(70, 600, -1/1.88, marsColor);
+  Celestial mars = new Celestial(70, 550, -year/1.88, marsColor);
   planets.add(mars);
   
-  Celestial phobos = new Celestial(20, 60, -4, color(145, 120, 85));
+  Celestial phobos = new Celestial(20, 60, -year/0.0008, color(145, 120, 85));
   mars.moons.add(phobos);
 
-  Celestial deimos = new Celestial(5, 100, -2, color(214, 192, 62));
+  Celestial deimos = new Celestial(5, 100, -year/0.00346, color(214, 192, 62));
   mars.moons.add(deimos);
 
   color jupiterColor = color(232,205,139);
-  Celestial jupiter = new Celestial(350, 1200, -1/11.86, jupiterColor);
-  jupiter.initialAngle= PI/8;
+  Celestial jupiter = new Celestial(350, 1100, -year/11.86, jupiterColor);
   planets.add(jupiter);
   
   color ioColor = color(255, 255, 0);
-  Celestial io = new Celestial(36, 300, -2.4, ioColor);
+  Celestial io = new Celestial(36, -200, -year/0.00484, ioColor);
   jupiter.moons.add(io);
 
-  Celestial europa = new Celestial(30, 320, -1.7, color(229, 143, 45));
+  Celestial europa = new Celestial(32, -270, -year/0.0097, color(229, 143, 45));
   jupiter.moons.add(europa);
   
-  Celestial ganymede = new Celestial();
-  Celestial callisto = new Celestial();
+  Celestial ganymede = new Celestial(52, -360, -year/0.0196, color(165, 147, 127));
+  jupiter.moons.add(ganymede);
+  Celestial callisto = new Celestial(48, -420, -year/0.0457 ,color(51, 62, 91));
+  jupiter.moons.add(callisto);
+  
+  for(Celestial jm : jupiter.moons){
+    jm.initialAngle+=PI/2;
+  }
+  
+  for(Celestial planet: planets){
+    planet.initialAngle+=PI/8;
+  }
+  
+  if(slowDownMoons){
+    phobos.speed/=100;
+    deimos.speed/=100;
+    io.speed/=100;
+    europa.speed/=100;
+    ganymede.speed/=100;
+    callisto.speed/=100;
+  }
 }
 
 void draw(){
