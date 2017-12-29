@@ -2,13 +2,13 @@ float delta = 0;
 ArrayList<Celestial> planets = new ArrayList<Celestial>();
 
 void setup(){
-  fullScreen();
+  fullScreen(P3D);
   
   float year = 1;
   boolean slowDownMoons = true;
   
   color mercuryColor= color(209,200,150);
-  Celestial mercury = new Celestial(20, 150, -year/0.24, mercuryColor);
+  Celestial mercury = new Celestial(24, 150, -year/0.24, mercuryColor);
   planets.add(mercury);
   
   color venusColor = color(150,114,43);
@@ -19,7 +19,6 @@ void setup(){
   Celestial earth = new Celestial(100,350, -year, earthColor);
   planets.add(earth);
   
-  
   Celestial moon = new Celestial(20, 100, -year/0.0748, color(155,152,149));
   earth.moons.add(moon);
   
@@ -27,7 +26,7 @@ void setup(){
   Celestial mars = new Celestial(70, 550, -year/1.88, marsColor);
   planets.add(mars);
   
-  Celestial phobos = new Celestial(20, 60, -year/0.0008, color(145, 120, 85));
+  Celestial phobos = new Celestial(18, 60, -year/0.0008, color(145, 120, 85));
   mars.moons.add(phobos);
 
   Celestial deimos = new Celestial(5, 100, -year/0.00346, color(214, 192, 62));
@@ -65,19 +64,30 @@ void setup(){
     ganymede.speed/=100;
     callisto.speed/=100;
   }
+  //earth.xlr8=-1;
 }
 
 void draw(){
-  background(255);
+  pushMatrix();
+  if(mousePressed){
+    lights();
+  }
+  pointLight(255, 255, 255, width/4, height/2, -100);
+  translate(0,0,-100);
+  background(0);
   noStroke();
   translate(width/4, height/2);    
-  fill(239, 211 , 50);
+  //fill(239, 211 , 50);
+  emissive(239, 211 , 50);
   //ellipse(0,0, 70, 70);
-  star(0, 0, 80, 100+(7*sin(20*delta)), 40);
+  //star(0, 0, 80, 100+(7*sin(20*delta)), 40);
+  sphere(70);
   
+  emissive(0,0,0);
   for(Celestial planet: planets){
     planet.drawCelestial();
   }
+  popMatrix();
   
   delta+=0.01;
   
@@ -97,15 +107,16 @@ class Celestial{
   float size;
   float orbitalRadius;
   float speed;
+  float xlr8= 0;
   color planetColor;
   ArrayList<Celestial> moons = new ArrayList<Celestial>();
   
   void drawCelestial(){
     pushMatrix();
-    rotate(delta*speed + initialAngle);
+    rotate(delta*delta*xlr8+delta*speed + initialAngle);
     translate(orbitalRadius, 0);
     fill(planetColor);
-    ellipse(0,0,size,size);
+    sphere(size/2);
     for(Celestial moon : moons){
       moon.drawCelestial();
     }
