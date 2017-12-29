@@ -1,8 +1,10 @@
 float delta = 0;
 ArrayList<Celestial> planets = new ArrayList<Celestial>();
+PShape torusObj;
 
 void setup(){
   fullScreen(P3D);
+  torusObj = loadShape("shuttle.obj");
   
   float year = 1;
   boolean slowDownMoons = true;
@@ -31,6 +33,10 @@ void setup(){
 
   Celestial deimos = new Celestial(5, 100, -year/0.00346, color(214, 192, 62));
   mars.moons.add(deimos);
+
+  Celestial torus = new Celestial(70, 700, year/1.88, color(255,255,255));
+  torus.shape=torusObj;
+  planets.add(torus);
 
   color jupiterColor = color(232,205,139);
   Celestial jupiter = new Celestial(350, 1100, -year/11.86, jupiterColor);
@@ -72,6 +78,7 @@ void draw(){
   if(mousePressed){
     lights();
   }
+  directionalLight(255,255,255,0,-1,0);
   pointLight(255, 255, 255, width/4, height/2, -100);
   translate(0,0,-100);
   background(0);
@@ -110,13 +117,19 @@ class Celestial{
   float xlr8= 0;
   color planetColor;
   ArrayList<Celestial> moons = new ArrayList<Celestial>();
+  PShape shape;
   
   void drawCelestial(){
     pushMatrix();
     rotate(delta*delta*xlr8+delta*speed + initialAngle);
     translate(orbitalRadius, 0);
     fill(planetColor);
-    sphere(size/2);
+    if(shape!=null){
+      rotateZ(-PI/2);
+      shape(shape,0,0,size,size);
+    } else {
+      sphere(size/2);
+    }
     for(Celestial moon : moons){
       moon.drawCelestial();
     }
