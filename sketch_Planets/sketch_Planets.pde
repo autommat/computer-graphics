@@ -14,6 +14,7 @@ void setup(){
   Celestial mercury = new Celestial(24, 150, -year/0.24, mercuryColor);
   mercury.orbitAngle=PI/4;
   planets.add(mercury);
+  mercury.specular = color(0,0,255);
   
   color venusColor = color(150,114,43);
   Celestial venus = new Celestial(60, 200, -year/0.62, venusColor);
@@ -25,24 +26,27 @@ void setup(){
   earth.texture = textureJpg;
   planets.add(earth);
   
-  Celestial moon = new Celestial(20, 100, -year/0.0748, color(155,152,149));
+  Celestial moon = new Celestial(20, 150, -year/0.0748, color(155,152,149));
   moon.orbitAngle = PI/2;
   earth.moons.add(moon);
   
+  Celestial satellite = new Celestial(30, 100, year, color(0,0,255));
+  earth.moons.add(satellite);
+  satellite.specular=color(175,175,0);
+  satellite.isBox = true;
+  
   color marsColor = color(193, 138, 60);
   Celestial mars = new Celestial(70, 550, -year/1.88, marsColor);
-  mars.spotL=marsColor;
-  mars.orbitAngle=PI/4;
+  mars.spotL=color(255,0,0);
   planets.add(mars);
   
   Celestial phobos = new Celestial(18, 60, -year/0.0008, color(145, 120, 85));
-  //phobos.orbitAngle=PI/2;
   mars.moons.add(phobos);
 
   Celestial deimos = new Celestial(5, 100, -year/0.00346, color(214, 192, 62));
   mars.moons.add(deimos);
   deimos.orbitAngle=3*PI/4;
-  deimos.shape = createShape(BOX, 7);
+  deimos.isBox = true;
 
   Celestial shuttle = new Celestial(70, 700, year/1.88, color(255,255,255));
   shuttle.shape=shuttleObj;
@@ -67,6 +71,7 @@ void setup(){
   
   for(Celestial jm : jupiter.moons){
     jm.initialAngle+=PI/2;
+    jm.specular=color(0,0,200);
   }
   
   for(Celestial planet: planets){
@@ -81,25 +86,21 @@ void setup(){
     ganymede.speed/=100;
     callisto.speed/=100;
   }
-  //earth.xlr8=-1;
 }
 
 void draw(){
-  directionalLight(255,255,255,-1,1,1);
+  directionalLight(255,255,255,1,1,0);
+  lightSpecular(200,200,200);
   pointLight(255, 255, 255, width/4, height/2, -100);
   translate(width/4,height/2,-100);
 
   rotateX(3*PI/8);
   //rotateX(PI/2);
-  if(mousePressed){
-    lights();
-  }
+  
   background(0);
   noStroke();
   //translate(width/4, height/2);    
-  //fill(239, 211 , 50);
   emissive(239, 211 , 50);
-  //ellipse(0,0, 70, 70);
   //star(0, 0, 80, 100+(7*sin(20*delta)), 40);
   sphere(70);
   
@@ -132,6 +133,8 @@ class Celestial{
   PImage texture;
   float orbitAngle=0;
   color spotL=0;
+  color specular = 0;
+  boolean isBox = false;
   
   void drawCelestial(){
     pushMatrix();
@@ -139,12 +142,15 @@ class Celestial{
     rotate(delta*delta*xlr8+delta*speed + initialAngle);
     translate(orbitalRadius, 0);
     fill(planetColor);
+    specular(specular);
     if(spotL!=0){
-      spotLight(255,0,0,orbitalRadius,0,0,0,-1,0,PI/2,6000);
+      spotLight(red(spotL),green(spotL),blue(spotL),orbitalRadius,0,0,-1,0,0,PI/2,6000);
     }
     if(shape!=null){
       rotateZ(-PI/2);
       shape(shape);
+    } else if(isBox){
+      box(size/2);
     } else if(texture != null) {
       rotateX(-PI/2);
       PShape textured = createShape(SPHERE,size/2);
