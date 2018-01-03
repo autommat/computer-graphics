@@ -2,6 +2,7 @@ float delta = 0;
 ArrayList<Celestial> planets = new ArrayList<Celestial>();
 PShape shuttleObj;
 PImage textureJpg;
+Celestial spot;
 
 void setup(){
   fullScreen(P3D);
@@ -39,6 +40,7 @@ void setup(){
   Celestial mars = new Celestial(70, 550, -year/1.88, marsColor);
   mars.spotL=color(255,0,0);
   planets.add(mars);
+  spot = mars;
   
   Celestial phobos = new Celestial(18, 60, -year/0.0008, color(145, 120, 85));
   mars.moons.add(phobos);
@@ -105,6 +107,12 @@ void draw(){
   sphere(70);
   
   emissive(0,0,0);
+  pushMatrix();
+  rotateX(spot.orbitAngle);
+    rotate(delta*spot.speed + spot.initialAngle);
+    translate(spot.orbitalRadius, 0);
+  spotLight(red(spot.spotL),green(spot.spotL),blue(spot.spotL),0,0,0,-1,0,0,PI/4,2);
+  popMatrix();
   for(Celestial planet: planets){
     planet.drawCelestial();
   }
@@ -144,7 +152,7 @@ class Celestial{
     fill(planetColor);
     specular(specular);
     if(spotL!=0){
-      spotLight(red(spotL),green(spotL),blue(spotL),orbitalRadius,0,0,-1,0,0,PI/2,6000);
+      //spotLight(red(spotL),green(spotL),blue(spotL),orbitalRadius,0,0,1,0,0,PI/4,2);
     }
     if(shape!=null){
       rotateZ(-PI/2);
