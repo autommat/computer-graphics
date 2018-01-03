@@ -3,6 +3,7 @@ ArrayList<Celestial> planets = new ArrayList<Celestial>();
 PShape shuttleObj;
 PImage textureJpg;
 Celestial spot;
+int firework=0;
 
 void setup(){
   fullScreen(P3D);
@@ -91,33 +92,45 @@ void setup(){
 }
 
 void draw(){
-  directionalLight(255,255,255,1,1,0);
-  lightSpecular(200,200,200);
+  //LIGHTS
+  lightSpecular(255,255,255);
+  directionalLight(255,255,255,-1,1,0);
+  //if(mousePressed){
+  lightSpecular(0,0,0);
+  //}
   pointLight(255, 255, 255, width/4, height/2, -100);
-  translate(width/4,height/2,-100);
 
-  rotateX(3*PI/8);
-  //rotateX(PI/2);
+  //firework
+  if(!mousePressed){
+    if((firework)%25==0){
+      pointLight(0,255,0,width/2,height/4,-200);
+    }
+  }
   
+  //STAR
+  translate(width/4,height/2,-100);
+  rotateX(3*PI/8);
   background(0);
   noStroke();
   //translate(width/4, height/2);    
-  emissive(239, 211 , 50);
   //star(0, 0, 80, 100+(7*sin(20*delta)), 40);
+  emissive(239, 211 , 50);
   sphere(70);
-  
   emissive(0,0,0);
+  
+  //SPOTLIGHT
   pushMatrix();
   rotateX(spot.orbitAngle);
-    rotate(delta*spot.speed + spot.initialAngle);
-    translate(spot.orbitalRadius, 0);
+  rotate(delta*spot.speed + spot.initialAngle);
+  translate(spot.orbitalRadius, 0);
   spotLight(red(spot.spotL),green(spot.spotL),blue(spot.spotL),0,0,0,-1,0,0,PI/4,2);
   popMatrix();
+  
   for(Celestial planet: planets){
     planet.drawCelestial();
   }
   delta+=0.01;
-  
+  firework++;
 }
 
 
@@ -151,9 +164,9 @@ class Celestial{
     translate(orbitalRadius, 0);
     fill(planetColor);
     specular(specular);
-    if(spotL!=0){
-      //spotLight(red(spotL),green(spotL),blue(spotL),orbitalRadius,0,0,1,0,0,PI/4,2);
-    }
+    //if(spotL!=0){
+    //  spotLight(red(spotL),green(spotL),blue(spotL),orbitalRadius,0,0,1,0,0,PI/4,2);
+    //}
     if(shape!=null){
       rotateZ(-PI/2);
       shape(shape);
