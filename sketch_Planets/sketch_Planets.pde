@@ -1,3 +1,6 @@
+import queasycam.*;
+
+QueasyCam cam;
 float delta = 0;
 ArrayList<Celestial> planets = new ArrayList<Celestial>();
 PShape shuttleObj;
@@ -7,6 +10,7 @@ int firework=0;
 
 void setup(){
   fullScreen(P3D);
+  cam = new QueasyCam(this);
   shuttleObj = loadShape("shuttle.obj");
   textureJpg = loadImage("earthmap.jpg");
   float year = 1;
@@ -92,6 +96,14 @@ void setup(){
 }
 
 void draw(){
+  
+  float fov = PI / 3.0;  // 60 degrees
+  float cameraZ = (height / 2.0) / tan(fov / 2.0);
+  perspective(fov,                        //field of view angle for vertical direction
+              float(width)/float(height), //ratio of width to height
+              cameraZ / 10.0,             //z-position of nearest clipping plane
+              10000);                     //z-position of farthest clipping plane
+  
   //LIGHTS
   lightSpecular(255,255,255);
   directionalLight(255,255,255,-1,1,0);
@@ -101,15 +113,14 @@ void draw(){
   pointLight(255, 255, 255, width/4, height/2, -100);
 
   //firework
-  if(!mousePressed){
-    if((firework)%25==0){
-      pointLight(0,255,0,width/2,height/4,-200);
-    }
-  }
+  //if(!mousePressed){
+  //  if((firework)%25==0){
+  //    pointLight(0,255,0,width/2,height/4,-200);
+  //  }
+  //}
   
   //STAR
-  translate(width/4,height/2,-100);
-  rotateX(3*PI/8);
+  translate(width/2,height/2);
   background(0);
   noStroke();
   //translate(width/4, height/2);    
