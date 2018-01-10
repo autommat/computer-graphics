@@ -8,6 +8,8 @@ PImage textureJpg;
 Celestial spot;
 int firework=0;
 PShape userShuttle;
+int pos = 0;
+boolean shootOn = false;
 
 void setup(){
   fullScreen(P3D);
@@ -27,23 +29,23 @@ void setup(){
   shuttleLead.setFill(color(66, 92, 244));
   noStroke();
   color fleetColor = color(255,0,0);
-  PShape smoke1 = createShape(SPHERE, 5);
-  smoke1.translate(-10,0,-30);
-  smoke1.setFill(fleetColor);
-  PShape smoke2 = createShape(SPHERE, 5);
-  smoke2.translate(-10,0,30);
-  smoke2.setFill(fleetColor);
-  PShape smoke3 = createShape(SPHERE, 5);
-  smoke3.translate(-40,0,-50);
-  smoke3.setFill(fleetColor);
-  PShape smoke4 = createShape(SPHERE, 5);
-  smoke4.translate(-40,0,50);
-  smoke4.setFill(fleetColor);
+  PShape fleet1 = createShape(SPHERE, 5);
+  fleet1.translate(-10,0,-30);
+  fleet1.setFill(fleetColor);
+  PShape fleet2 = createShape(SPHERE, 5);
+  fleet2.translate(-10,0,30);
+  fleet2.setFill(fleetColor);
+  PShape fleet3 = createShape(SPHERE, 5);
+  fleet3.translate(-40,0,-50);
+  fleet3.setFill(fleetColor);
+  PShape fleet4 = createShape(SPHERE, 5);
+  fleet4.translate(-40,0,50);
+  fleet4.setFill(fleetColor);
   userShuttle.addChild(shuttleLead);
-  userShuttle.addChild(smoke1);
-  userShuttle.addChild(smoke2);
-  userShuttle.addChild(smoke3);
-  userShuttle.addChild(smoke4);
+  userShuttle.addChild(fleet1);
+  userShuttle.addChild(fleet2);
+  userShuttle.addChild(fleet3);
+  userShuttle.addChild(fleet4);
   
   color mercuryColor= color(209,200,150);
   Celestial mercury = new Celestial(24, 150, -year/0.24, mercuryColor);
@@ -126,35 +128,24 @@ void setup(){
 
 void draw(){
   noCursor();
-  float fov = PI / 3.0;  // 60 degrees
+  float fov = PI / 3.0;  
   float cameraZ = (height / 2.0) / tan(fov / 2.0);
   perspective(fov,                        //field of view angle for vertical direction
               float(width)/float(height), //ratio of width to height
               cameraZ / 10.0,             //z-position of nearest clipping plane
-              cameraZ*10.0);                     //z-position of farthest clipping plane
-  
+              cameraZ*10.0);              //z-position of farthest clipping plane
+
   //LIGHTS
   lightSpecular(255,255,255);
   directionalLight(255,255,255,-1,1,0);
-  //if(mousePressed){
   lightSpecular(0,0,0);
-  //}
   pointLight(255, 255, 255, width/4, height/2, -100);
-
-  //firework
-  //if(!mousePressed){
-  //  if((firework)%25==0){
-  //    pointLight(0,255,0,width/2,height/4,-200);
-  //  }
-  //}
   
   //STAR
   rotateX(PI/2);
   translate(width/2,height/2);
   background(0);
   noStroke();
-  //translate(width/4, height/2);    
-  //star(0, 0, 80, 100+(7*sin(20*delta)), 40);
   emissive(239, 211 , 50);
   sphere(70);
   emissive(0,0,0);
@@ -174,8 +165,21 @@ void draw(){
   translate(cam.position.x, cam.position.y, cam.position.z); 
   rotateY(-cam.pan); //shuttle follows cam horizontally
   rotateZ(cam.tilt);  //shuttle follows cam vertially
-  translate(200,60,0); //shuttle in front of camera 
+  translate(250,60,0); //shuttle in front of camera: how far, how low
   shape(userShuttle);
+  if(mousePressed){
+    shootOn = true;
+  }
+  if(shootOn) {
+      pos++;
+      if(pos>50){
+        shootOn = false;
+        pos = 0;
+      }
+      translate(100+pos*10,0,0);
+      fill(color(255,0,0));
+      sphere(5);
+  }
   popMatrix();
   
   for(Celestial planet: planets){
@@ -216,9 +220,6 @@ class Celestial{
     translate(orbitalRadius, 0);
     fill(planetColor);
     specular(specular);
-    //if(spotL!=0){
-    //  spotLight(red(spotL),green(spotL),blue(spotL),orbitalRadius,0,0,1,0,0,PI/4,2);
-    //}
     if(shape!=null){
       rotateZ(-PI/2);
       shape(shape);
@@ -237,19 +238,4 @@ class Celestial{
     }
     popMatrix();
   }
-}
-
-void star(float x, float y, float radius1, float radius2, int npoints) {
-  float angle = TWO_PI / npoints;
-  float halfAngle = angle/2.0;
-  beginShape();
-  for (float a = 0; a < TWO_PI; a += angle) {
-    float sx = x + cos(a) * radius2;
-    float sy = y + sin(a) * radius2;
-    vertex(sx, sy);
-    sx = x + cos(a+halfAngle) * radius1;
-    sy = y + sin(a+halfAngle) * radius1;
-    vertex(sx, sy);
-  }
-  endShape(CLOSE);
 }
