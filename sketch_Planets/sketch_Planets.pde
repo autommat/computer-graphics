@@ -7,6 +7,7 @@ PShape shuttleObj;
 PImage textureJpg;
 Celestial spot;
 int firework=0;
+PShape userShuttle;
 
 void setup(){
   fullScreen(P3D);
@@ -15,6 +16,34 @@ void setup(){
   textureJpg = loadImage("earthmap.jpg");
   float year = 1;
   boolean slowDownMoons = true;
+  
+  //preparing shuttle
+  userShuttle = createShape(GROUP);
+  PShape shuttleLead = loadShape("shuttle.obj");
+  shuttleLead.scale(5);
+  shuttleLead.rotateX(PI/2);
+  shuttleLead.rotateY(PI);
+  shuttleLead.translate(70,0,0);
+  shuttleLead.setFill(color(66, 92, 244));
+  noStroke();
+  color fleetColor = color(255,0,0);
+  PShape smoke1 = createShape(SPHERE, 5);
+  smoke1.translate(-10,0,-30);
+  smoke1.setFill(fleetColor);
+  PShape smoke2 = createShape(SPHERE, 5);
+  smoke2.translate(-10,0,30);
+  smoke2.setFill(fleetColor);
+  PShape smoke3 = createShape(SPHERE, 5);
+  smoke3.translate(-40,0,-50);
+  smoke3.setFill(fleetColor);
+  PShape smoke4 = createShape(SPHERE, 5);
+  smoke4.translate(-40,0,50);
+  smoke4.setFill(fleetColor);
+  userShuttle.addChild(shuttleLead);
+  userShuttle.addChild(smoke1);
+  userShuttle.addChild(smoke2);
+  userShuttle.addChild(smoke3);
+  userShuttle.addChild(smoke4);
   
   color mercuryColor= color(209,200,150);
   Celestial mercury = new Celestial(24, 150, -year/0.24, mercuryColor);
@@ -96,13 +125,13 @@ void setup(){
 }
 
 void draw(){
-  
+  noCursor();
   float fov = PI / 3.0;  // 60 degrees
   float cameraZ = (height / 2.0) / tan(fov / 2.0);
   perspective(fov,                        //field of view angle for vertical direction
               float(width)/float(height), //ratio of width to height
               cameraZ / 10.0,             //z-position of nearest clipping plane
-              10000);                     //z-position of farthest clipping plane
+              cameraZ*10.0);                     //z-position of farthest clipping plane
   
   //LIGHTS
   lightSpecular(255,255,255);
@@ -120,6 +149,7 @@ void draw(){
   //}
   
   //STAR
+  rotateX(PI/2);
   translate(width/2,height/2);
   background(0);
   noStroke();
@@ -135,6 +165,17 @@ void draw(){
   rotate(delta*spot.speed + spot.initialAngle);
   translate(spot.orbitalRadius, 0);
   spotLight(red(spot.spotL),green(spot.spotL),blue(spot.spotL),0,0,0,-1,0,0,PI/4,2);
+  popMatrix();
+  
+  //USER SHUTTLE
+  pushMatrix();
+  translate(-width/2, - height/2);
+  rotateX(-PI/2);
+  translate(cam.position.x, cam.position.y, cam.position.z); 
+  rotateY(-cam.pan); //shuttle follows cam horizontally
+  rotateZ(cam.tilt);  //shuttle follows cam vertially
+  translate(200,60,0); //shuttle in front of camera 
+  shape(userShuttle);
   popMatrix();
   
   for(Celestial planet: planets){
